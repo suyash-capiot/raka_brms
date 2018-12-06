@@ -1,0 +1,18 @@
+-
+  name: Create Zip Of BRMS data on Local Server
+  hosts: all
+  become: true
+  vars:
+    host_user: spagare
+  tasks:
+    - name: Zip BRMS Data
+      archive:
+        path:
+          - /home/{{ host_user }}/EAP-6.4.0
+          - /home/{{ host_user }}/repositories
+          - /home/{{ host_user }}/.m2
+          - /home/{{ host_user }}/.niogit
+          - /home/{{ host_user }}/.index
+        dest: /home/{{ host_user }}/EAP-6.4.0.zip
+        owner: "{{ host_user }}"
+        group: "{{ host_user }}"
