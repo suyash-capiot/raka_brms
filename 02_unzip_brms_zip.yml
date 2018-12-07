@@ -1,0 +1,44 @@
+-
+  name: Unzip BRMS data on Target Server
+  hosts: all
+  become: true
+  vars:
+    host_user: suyash
+    target_user: spagare
+  tasks:
+    - name: Change Permisssion of EAP-6.4.0.zip
+      file:
+        path: /home/{{ target_user }}/{{ item.dir }}
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        mode: 0777
+      with_items:
+        - { dir: EAP-6.4.0.zip }
+
+    - name: Unzip BRMS Data
+      unarchive:
+        src: /home/{{ target_user }}/EAP-6.4.0.zip
+        dest: /home/{{ target_user }}
+        remote_src: yes
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+
+    - name: Change Permisssion of Directory
+      file:
+        path: /home/{{ target_user }}/{{ item.dir }}
+        owner: "{{ target_user }}"
+        group: "{{ target_user }}"
+        recurse: yes
+      with_items:
+        - { dir: EAP-6.4.0 }
+        - { dir: repositories }
+        - { dir: .m2 }
+        - { dir: .niogit }
+        - { dir: .index }
+        
+    - name: Replace User and IP-Address
+      shell:
+        find /home/{{ target_user }} -type f -exec sed -i 's/{{ item }}/g' {} \;
+      with_items:
+        - \home\/{{ host_user }}/\home\/{{ target_user }}
+        - 192.168.56.30/192.168.0.122

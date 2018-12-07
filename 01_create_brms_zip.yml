@@ -1,0 +1,31 @@
+-
+  name: Create Zip Of BRMS data on Local Server
+  hosts: all
+  become: true
+  vars:
+    host_user: suyash
+    target_user: spagare
+  tasks:
+    - name: Zip BRMS Data
+      archive:
+        path:
+          - /home/{{ host_user }}/EAP-6.4.0
+          - /home/{{ host_user }}/repositories
+          - /home/{{ host_user }}/.m2
+          - /home/{{ host_user }}/.niogit
+          - /home/{{ host_user }}/.index
+        dest: /home/{{ host_user }}/EAP-6.4.0.zip
+        format: zip
+        owner: "{{ host_user }}"
+        group: "{{ host_user }}"
+
+    - name: Create bash Script for SCP transfer
+      copy:
+        content: "scp /home/{{ host_user }}/EAP-6.4.0.zip root@192.168.0.122:/home/{{ target_user }}"
+        dest: "/home/{{ host_user }}/transferBRMS.sh"
+        owner: "{{ host_user }}"
+        group: "{{ host_user }}"
+        mode: 0755
+
+    - name: Execute transferBRMS bash script
+      shell: /home/{{ host_user }}/transferBRMS.sh

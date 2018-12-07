@@ -1,0 +1,10 @@
+-
+  name: Start BRMS
+  hosts: all
+  become: true
+  vars:
+    host_user: suyash
+    target_user: spagare
+  tasks:
+    - shell: su - {{ target_user }} -c /home/{{ target_user }}/EAP-6.4.0/bin/standalone.sh
+       remote_src = yes
